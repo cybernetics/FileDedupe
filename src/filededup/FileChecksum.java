@@ -10,6 +10,7 @@
 package filededup;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.util.zip.CheckedInputStream;
 import java.util.zip.CRC32;
 
@@ -34,6 +35,10 @@ public class FileChecksum {
         catch( Throwable t ){
             ;   //TODO: do something in case of error.
         }
+    }
+    
+    public FileChecksum( Path p ) {
+        this( p.toFile());
     }
     
     /**

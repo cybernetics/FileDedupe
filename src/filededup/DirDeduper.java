@@ -10,6 +10,7 @@ package filededup;
 
 import java.io.File;
 import java.nio.file.*;
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 /**
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 public class DirDeduper {
     File dir;
     String origPath;
+    HashMap tableOfChecksums;
     int i = 0;
     
     public DirDeduper( String pathToDir ) {
@@ -28,6 +30,8 @@ public class DirDeduper {
     
     public int go()
     {
+        tableOfChecksums = new HashMap( 101 ); // 101 is prime
+        
         if( ! dir.isDirectory() ) {
             System.err.println( "Error: " + origPath + " is not a directory" );
             return( Status.FILE_ERROR );
@@ -38,30 +42,37 @@ public class DirDeduper {
         try (
             Stream<Path> entries = Files.walk( path )
                                         .filter( p-> p.toFile().isFile())
-                                        .peek(p->treadle(p)))
+                                        .peek(p->updateChecksums(p)))
 //                                        .peek(System.out::println))
         {
-            Object[] entriesArray = entries.toArray();
-       
-//                 Files.walk( path )
-//                      .filter( p-> p.toFile().isFile()).toArray(); 
-//            
-            for( Object f: entriesArray )
-                System.out.println( f.toString() );
-////            { 
-//                Object allFiles[] = entries.toArray();
-//                for( Object f : allFiles ) {
-//                    if( new File( f.toString() ).isFile())
-//                        System.out.println( f.toString() );
-//                }
-            System.out.println( "Count: " + i + " files");
-            }
+ //           for()
+        }
+//            Object[] entriesArray = entries.toArray();
+//       
+////                 Files.walk( path )
+////                      .filter( p-> p.toFile().isFile()).toArray(); 
+////            
+//            for( Object f: entriesArray ) {
+//                tableOfChecksums.get( f.toString() );
+//            }
+//                System.out.println( f.toString() );
+//////            { 
+////                Object allFiles[] = entries.toArray();
+////                for( Object f : allFiles ) {
+////                    if( new File( f.toString() ).isFile())
+////                        System.out.println( f.toString() );
+////                }
+//            System.out.println( "Count: " + i + " files");
+//            }
             catch( Throwable t ) {
                 //TODO
             }
             return( 0 );
         }
-    public void treadle( Path p ) {
-        i++;
+    
+    public void updateChecksums( Path p ) {
+        FileChecksum chksumCalculator = new FileChecksum( p );
+        long chksum = chksumCalculator.calculate();
+        tableOfChecksums.put( chksum, p );        
     }
 }

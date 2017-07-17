@@ -41,14 +41,17 @@ class DirDeduper {
             return( Status.FILE_ERROR );
         }
 
+        for( Path aFilePath : fileSet ) {
+            updateChecksums( aFilePath );
+        }
+
         return( Status.OK );
     }
     
-//    public Path updateChecksums( Path p ) {
-//        FileChecksum chksumCalculator = new FileChecksum( p );
-//        long chksum = chksumCalculator.calculate();
-//        tableOfChecksums.put( chksum, p );
-//        System.out.println( "cksum: " + chksum + " file: " + p );
-//        return p;
-//    }
+    Path updateChecksums( Path p ) {
+        long chksum = new FileChecksum( p ).calculate();
+        //fileChecksums.put( chksum, p );                    //CURR
+        System.out.println( "checksum: " + chksum + " file: " + p );
+        return p;
+    }
 }

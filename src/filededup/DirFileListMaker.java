@@ -23,18 +23,18 @@ import java.util.stream.Collectors;
  */
 public class DirFileListMaker
 {
-    ArrayList go( Path dir ) {
+    ArrayList<Path> go( Path dir ) {
         if( dir == null || dir.toString().isEmpty() )
             throw( new InvalidParameterException() );
 
-        ArrayList fileSet = new ArrayList();
+        ArrayList<Path> fileSet = new ArrayList<Path>();
         try {
             fileSet =
                 Files.walk(dir)
                     .filter(p -> p.toFile().isFile())
                     .peek(System.out::println)
                     .collect(Collectors.toCollection(ArrayList::new));
-     //       System.out.println("Size of file list: " + fileSet.size());
+        //    System.out.println("Size of file list: " + fileSet.size());
         } catch( Throwable t ) {
             System.out.println("Exception occurred in DirFileListMaker");
         }

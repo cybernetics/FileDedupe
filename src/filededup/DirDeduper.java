@@ -19,7 +19,7 @@ import java.util.*;
 class DirDeduper {
     private File dir;
     private String origPath;
-    private HashMap tableOfChecksums;
+    private HashMap fileChecksums;
 
     DirDeduper(String pathToDir) {
         origPath = pathToDir;
@@ -35,7 +35,7 @@ class DirDeduper {
 
         // create a list of all the files in the directory and its subdirectories
         Path path = FileSystems.getDefault().getPath(origPath);
-        ArrayList fileSet = new DirFileListMaker().go( path );
+        ArrayList<Path> fileSet = new DirFileListMaker().go( path );
         if( fileSet.isEmpty() ) {
             System.err.println("Error: Directory " + origPath + " contains no files");
             return( Status.FILE_ERROR );

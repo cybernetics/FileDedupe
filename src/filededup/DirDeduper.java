@@ -10,69 +10,55 @@ package filededup;
 
 import java.io.File;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.stream.Stream;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * De-duplicates a directory
  * @author alb (Andrew Binstock)
  */
-public class DirDeduper {
-    File dir;
-    String origPath;
-    HashMap tableOfChecksums;
+class DirDeduper {
+    private File dir;
+    private String origPath;
+    private HashMap tableOfChecksums;
     int i = 0;
     
-    public DirDeduper( String pathToDir ) {
+    DirDeduper(String pathToDir) {
         origPath = pathToDir;
         dir = new File( pathToDir );
     }
     
-    public int go()
-    {
-        tableOfChecksums = new HashMap( 101 ); // 101 is prime
-        
-        if( ! dir.isDirectory() ) {
-            System.err.println( "Error: " + origPath + " is not a directory" );
-            return( Status.FILE_ERROR );
-        }
-        
-        Path path = FileSystems.getDefault().getPath( origPath );
+    int go() {
+        tableOfChecksums = new HashMap(101); // 101 is prime
 
-        try (
-            Stream<Path> entries = Files.walk( path )
-                                        .filter( p-> p.toFile().isFile())
-                                        .peek(p->updateChecksums(p)))
-//                                        .peek(System.out::println))
-        {
- //           for()
+        if( !dir.isDirectory() ) {
+            System.err.println("Error: " + origPath + " is not a directory");
+            return (Status.FILE_ERROR);
         }
-//            Object[] entriesArray = entries.toArray();
-//       
-////                 Files.walk( path )
-////                      .filter( p-> p.toFile().isFile()).toArray(); 
-////            
-//            for( Object f: entriesArray ) {
-//                tableOfChecksums.get( f.toString() );
-//            }
-//                System.out.println( f.toString() );
-//////            { 
-////                Object allFiles[] = entries.toArray();
-////                for( Object f : allFiles ) {
-////                    if( new File( f.toString() ).isFile())
-////                        System.out.println( f.toString() );
-////                }
-//            System.out.println( "Count: " + i + " files");
-//            }
-            catch( Throwable t ) {
-                //TODO
-            }
-            return( 0 );
+
+        Path path = FileSystems.getDefault().getPath(origPath);
+
+        List fileSet = new ArrayList();
+        try {
+            fileSet =
+                Files.walk(path)
+                    .filter(p -> p.toFile().isFile())
+                    .peek(System.out::println)
+                    .collect(Collectors.toCollection(ArrayList::new));
+            System.out.println("Size of file list: " + fileSet.size());
+        } catch( Throwable t ) {
+            System.out.println("Exception occurred in go()");
         }
-    
-    public void updateChecksums( Path p ) {
-        FileChecksum chksumCalculator = new FileChecksum( p );
-        long chksum = chksumCalculator.calculate();
-        tableOfChecksums.put( chksum, p );        
+        return( fileSet.size() );
     }
+    
+//    public Path updateChecksums( Path p ) {
+//        FileChecksum chksumCalculator = new FileChecksum( p );
+//        long chksum = chksumCalculator.calculate();
+//        tableOfChecksums.put( chksum, p );
+//        System.out.println( "cksum: " + chksum + " file: " + p );
+//        return p;
+//    }
 }

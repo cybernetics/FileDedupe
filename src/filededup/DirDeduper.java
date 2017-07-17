@@ -10,10 +10,7 @@ package filededup;
 
 import java.io.File;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * De-duplicates a directory
@@ -23,35 +20,28 @@ class DirDeduper {
     private File dir;
     private String origPath;
     private HashMap tableOfChecksums;
-    int i = 0;
-    
+
     DirDeduper(String pathToDir) {
         origPath = pathToDir;
         dir = new File( pathToDir );
     }
     
     int go() {
-        tableOfChecksums = new HashMap(101); // 101 is prime
 
         if( !dir.isDirectory() ) {
             System.err.println("Error: " + origPath + " is not a directory");
-            return (Status.FILE_ERROR);
+            return( Status.FILE_ERROR );
         }
 
+        // create a list of all the files in the directory and its subdirectories
         Path path = FileSystems.getDefault().getPath(origPath);
-
-        List fileSet = new ArrayList();
-        try {
-            fileSet =
-                Files.walk(path)
-                    .filter(p -> p.toFile().isFile())
-                    .peek(System.out::println)
-                    .collect(Collectors.toCollection(ArrayList::new));
-            System.out.println("Size of file list: " + fileSet.size());
-        } catch( Throwable t ) {
-            System.out.println("Exception occurred in go()");
+        ArrayList fileSet = new DirFileListMaker().go( path );
+        if( fileSet.isEmpty() ) {
+            System.err.println("Error: Directory " + origPath + " contains no files");
+            return( Status.FILE_ERROR );
         }
-        return( fileSet.size() );
+
+        return( 0 );
     }
     
 //    public Path updateChecksums( Path p ) {

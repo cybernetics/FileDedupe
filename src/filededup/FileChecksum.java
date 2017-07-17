@@ -24,7 +24,7 @@ public class FileChecksum {
     private CheckedInputStream chis;
     private long fLength;
     
-    private final int TEN_MB = 1_0485_760;  // size of the buffer for CRC
+    private final int TEN_MB = 10_485_760;  // size of the buffer for CRC
     
     public FileChecksum( File f ) {
         try {

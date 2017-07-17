@@ -41,7 +41,7 @@ class DirDeduper {
             return( Status.FILE_ERROR );
         }
 
-        return( 0 );
+        return( Status.OK );
     }
     
 //    public Path updateChecksums( Path p ) {

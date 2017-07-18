@@ -34,7 +34,6 @@ public class DirFileListMaker
                     .filter(p -> p.toFile().isFile())
                     .peek(System.out::println)
                     .collect(Collectors.toCollection(ArrayList::new));
-        //    System.out.println("Size of file list: " + fileSet.size());
         } catch( Throwable t ) {
             System.out.println("Exception occurred in DirFileListMaker");
         }

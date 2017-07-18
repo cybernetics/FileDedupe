@@ -11,6 +11,7 @@ package filededup;
 import java.io.File;
 import java.nio.file.*;
 import java.util.*;
+import com.google.common.collect.*;
 
 /**
  * De-duplicates a directory
@@ -19,7 +20,9 @@ import java.util.*;
 class DirDeduper {
     private File dir;
     private String origPath;
-    private HashMap fileChecksums;
+//    private LinkedList<Long, Path> hashTable[] = new LinkedList[1021];
+    private TreeMultimap<Long, String> chksumTable;
+    private boolean duplicatesFound = false;
 
     DirDeduper(String pathToDir) {
         origPath = pathToDir;
@@ -41,8 +44,30 @@ class DirDeduper {
             return( Status.FILE_ERROR );
         }
 
+        // create the table for the checksums
+        chksumTable = chksumTable.create();
+
+        // calculate checksum for every file in fileSet and insert it into a hash table
         for( Path aFilePath : fileSet ) {
             updateChecksums( aFilePath );
+        }
+
+        System.out.println( "Number of files checked: " + chksumTable.size() );
+        NavigableSet<Long> keys = chksumTable.keySet();
+        for( Long key : keys ) {
+            NavigableSet<String> paths = chksumTable.get( key );
+            if( paths.size() > 1) {
+                duplicatesFound = true;
+                System.out.println( "These files are the same:");
+                for( String filepath : paths) {
+                    System.out.println( "\t" + filepath );
+                }
+                System.out.println( "" );
+            }
+        }
+
+        if( ! duplicatesFound ) {
+            System.out.println( "No duplicate files found in or below " + origPath );
         }
 
         return( Status.OK );
@@ -50,7 +75,7 @@ class DirDeduper {
     
     Path updateChecksums( Path p ) {
         long chksum = new FileChecksum( p ).calculate();
-        //fileChecksums.put( chksum, p );                    //CURR
+        chksumTable.put( chksum, p.toString() );
         System.out.println( "checksum: " + chksum + " file: " + p );
         return p;
     }

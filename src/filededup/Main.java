@@ -2,7 +2,7 @@
  * Looks for duplicate files based on CRC-32 checksumming. 
  * Project requires JDK 8 or later.
  *
- * Copyright (c) 2015-7 by Andrew Binstock. All rights reserved.
+ * Copyright (c) 2015-8 by Andrew Binstock. All rights reserved.
  * Licensed under the Creative Commons Attribution, Share Alike license
  * (CC BY-SA). Consult: https://creativecommons.org/licenses/by-sa/4.0/
  */
@@ -18,7 +18,7 @@ public class Main {
      *    * a single directory, in which case all files in the
      *      directory and subdirectories are analyzed
      *    * two filenames, in which case the files are compared for equality
-     *    -help/-h which prints usage instructions
+     *    * -help/-h which prints usage instructions
      */
     public static void main( final String[] args ) 
     {
@@ -51,7 +51,7 @@ public class Main {
     private static void printCopyright()
     {
         System.out.println(
-            "FileDedupe v.0.1 (c) Copyright 2017, Andrew Binstock. All rights reserved.\n" );
+            "FileDedupe v.0.2 (c) Copyright 2017-8, Andrew Binstock. All rights reserved.\n" );
     }
 
     private static void showUsage() {
